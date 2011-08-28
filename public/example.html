@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<title>example</title>
+	<style type="text/css" media="screen">
+body{margin:3em;font-size:150%;}
+body,input{font-family:sans-serif;font-size:1em;color:#555;}
+label{display:block;}
+#target{font-weight:bold;color:#08f;font-size:2em;}
+	</style>
+</head>
+
+<body>
+	<label>
+		Endpoint
+		<input type="text" name="endpoint" id="endpoint" value="http://localhost:3000/">
+	</label>
+	<label>
+		Url
+		<input type="text" name="url" id="url" value="http://bfoxall.com/index.php">
+	</label>
+	<input type="submit" name="init" value="init" id="init">
+	
+	<p>
+		<a id="target"></a>
+	</p>
+	
+	<p>
+		<input type="button" id="fetch" value="fetch URLS" disabled="true">
+	</p>
+	<ul id="urls">
+	</ul>
+	
+	<script src="/javascripts/jquery.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/tproxy.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" charset="utf-8">
+		$('#init').click(function(){
+			TProxy.init($('#endpoint').val());
+			var url = TProxy.url($('#url').val());
+			$('a#target').attr('href', url).text(url);
+			$('#fetch').attr('disabled',false)
+		});
+		
+		$('#fetch').click(function(){
+			$('#urls').empty();
+			TProxy.fetchURLs(function(urls){
+				$.each(urls,function(t){
+					$('<li>').text(t).appendTo('#urls');
+				})
+			}).error(function(e){
+				$('#urls').html('<li>error: '+e.responseText+'</li>');
+			})
+		})
+	</script>
+
+</body>
+</html>

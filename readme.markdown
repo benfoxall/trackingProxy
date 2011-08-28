@@ -14,18 +14,18 @@ This is how you create a link the the proxy, returns a link to that proxy (thoug
 
     TProxy.init('http://theTrackingProxyserver');
 
-### .start(targetURL)
+### .url(targetURL)
 
 This gives a url which the user can visit to the tracking.  The url returned might end up directing the user to a warning page,  so this should be used rather than guessing the url from the endpoint.
 
-    var url = TProxy.start('http://example/page.html');
+    var url = TProxy.url('http://example/page.html');
     $('a.start').attr('href',url);
 
-### .fetchURLS(callback)
+### .fetchURLs(callback)
 
 Retrieves a list of the urls that a user has visited.
 
-    TProxy.fetchURLS(function(url_list){
+    TProxy.fetchURLs(function(url_list){
       console.log("Urls visited:", url_list);
     });
 

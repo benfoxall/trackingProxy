@@ -46,12 +46,13 @@ label{display:block;}
 		
 		$('#fetch').click(function(){
 			$('#urls').empty();
-			TProxy.fetchURLs(function(urls){
-				$.each(urls,function(t){
-					$('<li>').text(t).appendTo('#urls');
-				})
+			TProxy.fetchURLs(function(response){
+				$.each(response.urls,function(i,url){
+					$('<li>').text(url).appendTo('#urls');
+				});
 			}).error(function(e){
 				$('#urls').html('<li>error: '+e.responseText+'</li>');
+				console.log(e);
 			})
 		})
 	</script>

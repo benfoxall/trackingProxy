@@ -39,8 +39,53 @@ app.get('/', function(req, res){
 */
 
 app.get('/_', function(req,res){
-	res.header('Content-type', 'application/json');
-	res.send('{"urls":["www.example.com/page1.htm","www.example.com/page2.htm","www.example.com/pagex.php"]}');
+	 res.json({"urls":["www.example.com/page1.htm","www.example.com/page2.htm","www.example.com/pagex.php"]});
+});
+
+
+// todo (?) use express to deal with this
+function proxyError(res, message){
+	res.send("Proxy error " + (message || ''),500);
+}
+
+var http = require('http');
+
+app.get(/\/([^\/]+)(\/.*)/, function(req,res){
+	
+	var target_host = req.params[0],
+		target_path = req.params[1];
+		
+	console.log("Visit: http://" + target_host + target_path)
+	
+	var options = {
+		host: target_host,
+		port: 80,
+		path: target_path,
+		method: req.method,
+		headers: req.headers
+	};
+	
+	http.request(options, function(subres) {
+		
+		//set the headers
+		for(var k in subres.headers){
+			res.header(k, subres.headers[k]);
+		}
+		
+		subres.on('data', function (chunk) {
+			res.write(chunk);
+		}).on('end', function(chunk){
+			res.end();
+		}).on('error', function(error){
+				proxyError(res, "(sub response) " + error.message);
+		});
+		
+	}).on('error', function(error){
+		proxyError(res, error.message);
+	
+	}).end();//issue the sub request
+	
+	
 })
 
 app.listen(3000);
